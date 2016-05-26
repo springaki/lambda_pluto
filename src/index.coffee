@@ -1,6 +1,6 @@
 dotenv = require('dotenv').config()
 
-slack_hook_url = process.env.SLACK_HOOK_URL
+slack_icon_url = process.env.SLACK_ICON_URL
 
 exports.handler = (event, context) ->
   text = [
@@ -22,5 +22,5 @@ exports.handler = (event, context) ->
   ].join('\n')
   context.done null,
     username: 'Twitter'
-    icon_url: 'https://s3-ap-northeast-1.amazonaws.com/akionetime-icons/twitter.png'
+    icon_url: slack_icon_url
     text: text

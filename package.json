@@ -1,6 +1,6 @@
 {
-  "name": "kyotorb_bot",
-  "description": "TODO",
+  "name": "pluto",
+  "description": "pluto bot lambda version",
   "version": "1.0.0",
   "dependencies": {
     "aws-sdk": "^2.3.2",
