@@ -10,7 +10,7 @@ module.exports = {
   region: "ap-northeast-1",
   role: aws_role,
   memorySize: 128,
-  timeout: 3,
+  timeout: 7,
   runtime: "nodejs4.3",
   handler: "index.handler"
 }

@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 slack_icon_url = process.env.SLACK_ICON_URL
+bot_name = process.env.BOT_NAME
 
 request = require 'requestretry'
 cheerio = require 'cheerio'
@@ -12,35 +13,13 @@ exports.handler = (event, context) ->
   console.log(JSON.stringify(event))
   console.log(JSON.stringify(context))
 
-  if event.user_name.match /(Twitter|pluto)/i
-    console.log("event.user_name.match!!!!!")
+  if event.user_name.match ///(Twitter|#{bot_name})///i
+    console.log("ignore bot!!!  event.user_name.match!!")
     return
-
-  text = [
-    JSON.stringify(event)
-    JSON.stringify(context)
-    event.token
-    event.team_id
-    event.team_domain
-    event.channel_id
-    event.channel_name
-    event.timestamp
-    event.user_id
-    event.user_name
-    event.trigger_word
-  ].join('\n')
-  text = [
-    '```' + text + '```'
-    event.text
-  ].join('\n')
 
   msg = event.text.match /(<@U0D84LJG3>|pluto) +(book|amazon|amzn) +(.*)/i
   console.log("msg: " + JSON.stringify(msg))
   if !msg
-    context.done null,
-      username: 'Twitter'
-      icon_url: slack_icon_url
-      text: text
     return
 
   keyword = msg[3]
@@ -65,11 +44,11 @@ exports.handler = (event, context) ->
     response_url = ''
     request options, (error, response, body) ->
       if body
-        console.log("error: " + error)
-        console.log("body: " + body)
-        console.log("response: " + response)
+        # console.log("error: " + error)
         $ = cheerio.load body
         title = $('title').text().replace(/\n/g, '')
+        # console.log("title: " + title)
+        # console.log("data-asin.attr: " + $('.s-result-item').attr('data-asin'))
         asociate_url = 'http://www.amazon.co.jp/dp/' + $('.s-result-item').attr('data-asin') + '?tag=hubot-pluto-22'
 
         bitly_api_url = 'https://api-ssl.bitly.com/v3/shorten?access_token=820673759628b8575c881f95d17f9d226e6b2395&longUrl=' + asociate_url
@@ -82,13 +61,13 @@ exports.handler = (event, context) ->
           res.on 'end', (res) ->
             ret = JSON.parse(body)
             response_url = ret.data.url
-            console.log("response_url:" + JSON.stringify(response_url))
 
-            console.log("line59, response_url: " + JSON.stringify(response_url))
             slack_option =
               username: 'pluto'
               icon_url: slack_icon_url
               text: response_url
+              parse: "full"
+              unfurl_links: "true"
             console.log("slack_option: " + JSON.stringify(slack_option))
 
             context.done null, slack_option
